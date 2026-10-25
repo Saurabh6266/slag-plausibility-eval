@@ -1,0 +1,1181 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created": "2026-10-22",
+    "title": "Slag Physical Plausibility Benchmark (SLPB-50)",
+    "description": "50 matched question pairs testing whether a language model can detect physically impossible claims in pyrometallurgy and slag chemistry. Each pair consists of one valid statement and one statement with exactly one planted physical error. Each pair is presented in three phrasing variants to control for surface-level sensitivity.",
+    "domain": "Pyrometallurgy / Slag Chemistry",
+    "num_pairs": 50,
+    "phrasings_per_pair": 3,
+    "total_prompts": 300,
+    "categories": {
+      "SUM_VIOLATION": {"description": "Oxide weight percentages sum to more than 100% (physically impossible).", "count": 10},
+      "BASICITY_INCONSISTENCY": {"description": "Stated basicity ratio is arithmetically inconsistent with oxide percentages, or the value is misinterpreted.", "count": 10},
+      "VISCOSITY_SIGN_ERROR": {"description": "Claimed direction of effect on slag viscosity is opposite to physical reality.", "count": 10},
+      "THERMODYNAMIC_ERROR": {"description": "Equilibrium direction, temperature dependence, or sign of thermodynamic driving force is opposite to physical reality.", "count": 10},
+      "MASS_BALANCE_ERROR": {"description": "Stoichiometric ratio, reaction product, or elemental balance is physically incorrect.", "count": 10}
+    },
+    "scoring_rubric": {
+      "CATCH": {"score": 2, "description": "Model correctly identifies the error and explains why it is physically impossible."},
+      "FLAG": {"score": 1, "description": "Model expresses uncertainty or notes inconsistency without fully diagnosing the error."},
+      "MISS": {"score": 0, "description": "Model accepts the invalid statement as correct without raising any concern."},
+      "INVENT": {"score": -1, "description": "Model fabricates a physically incorrect justification to defend the planted error."},
+      "SPURIOUS": {"score": -0.5, "description": "Applied to valid questions where the model raises a false alarm."}
+    },
+    "system_prompt": "You are an expert in pyrometallurgy and slag physical chemistry. Evaluate the following statement for physical and thermodynamic consistency. Think step by step. End your response with exactly one line: VERDICT: VALID or VERDICT: INVALID",
+    "model": "google/gemma-3-4b-it",
+    "model_justification": "Gemma 3 4B is Google's strongest open-weight 4B instruct model, performs competitively on STEM reasoning benchmarks (MMLU, GPQA), fits within the 0.6B-6B allowed range, and runs on a free Colab T4 — making it a credible proxy for frontier-model behavior at small scale."
+  },
+  "pairs": [
+    {
+      "id": "Q001", "category": "SUM_VIOLATION", "domain": "blast furnace slag",
+      "valid": {
+        "id": "Q001V",
+        "core": "Blast furnace slag: SiO2 34%, CaO 38%, Al2O3 12%, MgO 9%, FeO 5%, MnO 2%. Total = 100%.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "34+38+12+9+5+2=100. Physically consistent.",
+        "phrasing_A": "A blast furnace slag has the oxide composition: SiO2 34 wt%, CaO 38 wt%, Al2O3 12 wt%, MgO 9 wt%, FeO 5 wt%, MnO 2 wt%. Binary basicity CaO/SiO2 = 1.12. Is this composition physically consistent? Explain your reasoning. End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A process engineer writes: 'The blast furnace slag had: SiO2 34%, CaO 38%, Al2O3 12%, MgO 9%, FeO 5%, MnO 2%, giving B = 1.12.' As a physical chemist reviewing this report, do you find any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A metallurgy student submits a lab report: 'BF slag contained SiO2 34 wt%, CaO 38 wt%, Al2O3 12 wt%, MgO 9 wt%, FeO 5 wt%, MnO 2 wt%.' As their supervisor, evaluate the physical accuracy. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q001I",
+        "core": "Blast furnace slag: SiO2 34%, CaO 38%, Al2O3 12%, MgO 9%, FeO 5%, MnO 2%, TiO2 4%.",
+        "planted_error": "Oxides sum to 104% (34+38+12+9+5+2+4=104). Violates mass conservation.",
+        "planted_error_type": "sum > 100",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "34+38+12+9+5+2+4=104. Physically impossible — composition must sum to 100%.",
+        "phrasing_A": "A blast furnace slag has the oxide composition: SiO2 34 wt%, CaO 38 wt%, Al2O3 12 wt%, MgO 9 wt%, FeO 5 wt%, MnO 2 wt%, TiO2 4 wt%. Is this composition physically consistent? Explain your reasoning. End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A process engineer writes: 'The blast furnace slag had: SiO2 34%, CaO 38%, Al2O3 12%, MgO 9%, FeO 5%, MnO 2%, TiO2 4%.' As a physical chemist reviewing this report, do you find any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A metallurgy student submits a lab report: 'BF slag: SiO2 34%, CaO 38%, Al2O3 12%, MgO 9%, FeO 5%, MnO 2%, TiO2 4%.' As their supervisor, evaluate the physical accuracy. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q002", "category": "SUM_VIOLATION", "domain": "BOF steelmaking slag",
+      "valid": {
+        "id": "Q002V",
+        "core": "BOF slag: SiO2 42%, CaO 35%, Al2O3 10%, MgO 7%, FeO 6%. Total = 100%.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "42+35+10+7+6=100. Valid.",
+        "phrasing_A": "A BOF steelmaking slag has: SiO2 42 wt%, CaO 35 wt%, Al2O3 10 wt%, MgO 7 wt%, FeO 6 wt%. Is this composition physically self-consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A lab technician reports: 'XRF analysis gave SiO2 42%, CaO 35%, Al2O3 10%, MgO 7%, FeO 6%.' Do you see any issue with this composition report? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A junior engineer asks if SiO2 42%, CaO 35%, Al2O3 10%, MgO 7%, FeO 6% is a valid slag composition for a thermodynamic model. How do you respond? End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q002I",
+        "core": "BOF slag: SiO2 42%, CaO 38%, Al2O3 10%, MgO 7%, FeO 6%. Total = 103%.",
+        "planted_error": "42+38+10+7+6=103. Sum exceeds 100%.",
+        "planted_error_type": "sum > 100",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Oxides sum to 103%, violating mass conservation.",
+        "phrasing_A": "A BOF steelmaking slag has: SiO2 42 wt%, CaO 38 wt%, Al2O3 10 wt%, MgO 7 wt%, FeO 6 wt%. Is this composition physically self-consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A lab technician reports: 'XRF analysis gave SiO2 42%, CaO 38%, Al2O3 10%, MgO 7%, FeO 6%.' Do you see any issue with this composition report? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A junior engineer asks if SiO2 42%, CaO 38%, Al2O3 10%, MgO 7%, FeO 6% is a valid slag composition for a thermodynamic model. How do you respond? End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q003", "category": "SUM_VIOLATION", "domain": "EAF slag",
+      "valid": {
+        "id": "Q003V",
+        "core": "EAF slag: CaO 48%, SiO2 14%, Al2O3 5%, MgO 8%, FeO 22%, MnO 3%. Total = 100%.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "48+14+5+8+22+3=100. Valid.",
+        "phrasing_A": "An EAF slag has: CaO 48 wt%, SiO2 14 wt%, Al2O3 5 wt%, MgO 8 wt%, FeO 22 wt%, MnO 3 wt%. Is this composition physically consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A steelplant chemist reports EAF slag: CaO 48%, SiO2 14%, Al2O3 5%, MgO 8%, FeO 22%, MnO 3%. As a reviewer, do you find any inconsistency? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A student's process log records: 'EAF slag: CaO 48%, SiO2 14%, Al2O3 5%, MgO 8%, FeO 22%, MnO 3%.' Evaluate the physical plausibility of this composition. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q003I",
+        "core": "EAF slag: CaO 50%, SiO2 14%, Al2O3 5%, MgO 8%, FeO 22%, MnO 3%. Total = 102%.",
+        "planted_error": "50+14+5+8+22+3=102. Sum exceeds 100%.",
+        "planted_error_type": "sum > 100",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Oxides sum to 102%, violating mass conservation.",
+        "phrasing_A": "An EAF slag has: CaO 50 wt%, SiO2 14 wt%, Al2O3 5 wt%, MgO 8 wt%, FeO 22 wt%, MnO 3 wt%. Is this composition physically consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A steelplant chemist reports EAF slag: CaO 50%, SiO2 14%, Al2O3 5%, MgO 8%, FeO 22%, MnO 3%. As a reviewer, do you find any inconsistency? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A student's process log records: 'EAF slag: CaO 50%, SiO2 14%, Al2O3 5%, MgO 8%, FeO 22%, MnO 3%.' Evaluate the physical plausibility of this composition. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q004", "category": "SUM_VIOLATION", "domain": "ladle slag",
+      "valid": {
+        "id": "Q004V",
+        "core": "Ladle slag: SiO2 36%, CaO 37%, Al2O3 13%, MgO 8%, CaS 2%, FeO 4%. Total = 100%.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "36+37+13+8+2+4=100. Valid.",
+        "phrasing_A": "A ladle slag has: SiO2 36%, CaO 37%, Al2O3 13%, MgO 8%, CaS 2%, FeO 4%. Is this composition physically consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A secondary metallurgy report lists: SiO2 36%, CaO 37%, Al2O3 13%, MgO 8%, CaS 2%, FeO 4%. Do you see any issue? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A trainee presents ladle slag analysis: SiO2 36%, CaO 37%, Al2O3 13%, MgO 8%, CaS 2%, FeO 4%. Assess its physical validity. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q004I",
+        "core": "Ladle slag: SiO2 36%, CaO 39%, Al2O3 13%, MgO 8%, CaS 2%, FeO 4%. Total = 102%.",
+        "planted_error": "36+39+13+8+2+4=102. Sum exceeds 100%.",
+        "planted_error_type": "sum > 100",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Oxides sum to 102%.",
+        "phrasing_A": "A ladle slag has: SiO2 36%, CaO 39%, Al2O3 13%, MgO 8%, CaS 2%, FeO 4%. Is this composition physically consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A secondary metallurgy report lists: SiO2 36%, CaO 39%, Al2O3 13%, MgO 8%, CaS 2%, FeO 4%. Do you see any issue? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A trainee presents ladle slag analysis: SiO2 36%, CaO 39%, Al2O3 13%, MgO 8%, CaS 2%, FeO 4%. Assess its physical validity. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q005", "category": "SUM_VIOLATION", "domain": "AOD stainless slag",
+      "valid": {
+        "id": "Q005V",
+        "core": "AOD slag: SiO2 28%, CaO 42%, Al2O3 9%, MgO 10%, FeO 6%, Cr2O3 3%, TiO2 2%. Total = 100%.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "28+42+9+10+6+3+2=100. Valid.",
+        "phrasing_A": "An AOD stainless slag has: SiO2 28%, CaO 42%, Al2O3 9%, MgO 10%, FeO 6%, Cr2O3 3%, TiO2 2%. Is this physically consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A stainless steel plant reports AOD slag: SiO2 28%, CaO 42%, Al2O3 9%, MgO 10%, FeO 6%, Cr2O3 3%, TiO2 2%. Any inconsistencies? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A student analyzes AOD slag as: SiO2 28%, CaO 42%, Al2O3 9%, MgO 10%, FeO 6%, Cr2O3 3%, TiO2 2%. Is this plausible? End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q005I",
+        "core": "AOD slag: SiO2 28%, CaO 42%, Al2O3 9%, MgO 12%, FeO 6%, Cr2O3 3%, TiO2 2%. Total = 102%.",
+        "planted_error": "28+42+9+12+6+3+2=102. Sum exceeds 100%.",
+        "planted_error_type": "sum > 100",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Oxides sum to 102%.",
+        "phrasing_A": "An AOD stainless slag has: SiO2 28%, CaO 42%, Al2O3 9%, MgO 12%, FeO 6%, Cr2O3 3%, TiO2 2%. Is this physically consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A stainless steel plant reports AOD slag: SiO2 28%, CaO 42%, Al2O3 9%, MgO 12%, FeO 6%, Cr2O3 3%, TiO2 2%. Any inconsistencies? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A student analyzes AOD slag as: SiO2 28%, CaO 42%, Al2O3 9%, MgO 12%, FeO 6%, Cr2O3 3%, TiO2 2%. Is this plausible? End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q006", "category": "SUM_VIOLATION", "domain": "SAF ferronickel slag",
+      "valid": {
+        "id": "Q006V",
+        "core": "SAF ferronickel slag: SiO2 33%, CaO 40%, Al2O3 11%, MgO 8%, Na2O 5%, FeO 3%. Total = 100%.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "33+40+11+8+5+3=100. Valid.",
+        "phrasing_A": "A SAF slag has: SiO2 33%, CaO 40%, Al2O3 11%, MgO 8%, Na2O 5%, FeO 3%. Is this composition physically consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A ferronickel producer logs SAF slag: SiO2 33%, CaO 40%, Al2O3 11%, MgO 8%, Na2O 5%, FeO 3%. Any physical issues? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A student's SAF process report lists: SiO2 33%, CaO 40%, Al2O3 11%, MgO 8%, Na2O 5%, FeO 3%. Is this composition plausible? End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q006I",
+        "core": "SAF ferronickel slag: SiO2 33%, CaO 42%, Al2O3 11%, MgO 8%, Na2O 5%, FeO 3%. Total = 102%.",
+        "planted_error": "33+42+11+8+5+3=102. Sum exceeds 100%.",
+        "planted_error_type": "sum > 100",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Oxides sum to 102%.",
+        "phrasing_A": "A SAF slag has: SiO2 33%, CaO 42%, Al2O3 11%, MgO 8%, Na2O 5%, FeO 3%. Is this composition physically consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A ferronickel producer logs SAF slag: SiO2 33%, CaO 42%, Al2O3 11%, MgO 8%, Na2O 5%, FeO 3%. Any physical issues? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A student's SAF process report lists: SiO2 33%, CaO 42%, Al2O3 11%, MgO 8%, Na2O 5%, FeO 3%. Is this composition plausible? End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q007", "category": "SUM_VIOLATION", "domain": "converter slag",
+      "valid": {
+        "id": "Q007V",
+        "core": "Converter slag: CaO 52%, SiO2 14%, FeO 17%, Al2O3 4%, MgO 8%, MnO 3%, P2O5 2%. Total = 100%.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "52+14+17+4+8+3+2=100. Valid.",
+        "phrasing_A": "A converter slag has: CaO 52%, SiO2 14%, FeO 17%, Al2O3 4%, MgO 8%, MnO 3%, P2O5 2%. Is this physically consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A converter process report states: CaO 52%, SiO2 14%, FeO 17%, Al2O3 4%, MgO 8%, MnO 3%, P2O5 2%. Identify any physical inconsistency. End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A trainee presents converter slag: CaO 52%, SiO2 14%, FeO 17%, Al2O3 4%, MgO 8%, MnO 3%, P2O5 2%. Evaluate its plausibility. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q007I",
+        "core": "Converter slag: CaO 52%, SiO2 16%, FeO 17%, Al2O3 4%, MgO 8%, MnO 3%, P2O5 2%. Total = 102%.",
+        "planted_error": "52+16+17+4+8+3+2=102. Sum exceeds 100%.",
+        "planted_error_type": "sum > 100",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Oxides sum to 102%.",
+        "phrasing_A": "A converter slag has: CaO 52%, SiO2 16%, FeO 17%, Al2O3 4%, MgO 8%, MnO 3%, P2O5 2%. Is this physically consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A converter process report states: CaO 52%, SiO2 16%, FeO 17%, Al2O3 4%, MgO 8%, MnO 3%, P2O5 2%. Identify any physical inconsistency. End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A trainee presents converter slag: CaO 52%, SiO2 16%, FeO 17%, Al2O3 4%, MgO 8%, MnO 3%, P2O5 2%. Evaluate its plausibility. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q008", "category": "SUM_VIOLATION", "domain": "alumina-rich ladle slag",
+      "valid": {
+        "id": "Q008V",
+        "core": "Alumina-rich ladle slag: SiO2 38%, CaO 35%, Al2O3 16%, MgO 8%, FeO 2%, TiO2 1%. Total = 100%.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "38+35+16+8+2+1=100. Valid.",
+        "phrasing_A": "An alumina-rich ladle slag has: SiO2 38%, CaO 35%, Al2O3 16%, MgO 8%, FeO 2%, TiO2 1%. Is this composition physically valid? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A melt shop report lists: SiO2 38%, CaO 35%, Al2O3 16%, MgO 8%, FeO 2%, TiO2 1%. Any problems? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A student presents ladle slag data: SiO2 38%, CaO 35%, Al2O3 16%, MgO 8%, FeO 2%, TiO2 1%. How do you assess its physical consistency? End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q008I",
+        "core": "Alumina-rich ladle slag: SiO2 38%, CaO 35%, Al2O3 16%, MgO 9%, FeO 3%, TiO2 1%. Total = 102%.",
+        "planted_error": "38+35+16+9+3+1=102. Sum exceeds 100%.",
+        "planted_error_type": "sum > 100",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Oxides sum to 102%.",
+        "phrasing_A": "An alumina-rich ladle slag has: SiO2 38%, CaO 35%, Al2O3 16%, MgO 9%, FeO 3%, TiO2 1%. Is this composition physically valid? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A melt shop report lists: SiO2 38%, CaO 35%, Al2O3 16%, MgO 9%, FeO 3%, TiO2 1%. Any problems? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A student presents ladle slag data: SiO2 38%, CaO 35%, Al2O3 16%, MgO 9%, FeO 3%, TiO2 1%. How do you assess its physical consistency? End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q009", "category": "SUM_VIOLATION", "domain": "high-alumina BF slag",
+      "valid": {
+        "id": "Q009V",
+        "core": "High-alumina BF slag: SiO2 31%, CaO 41%, Al2O3 13%, MgO 11%, FeO 3%, MnO 1%. Total = 100%.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "31+41+13+11+3+1=100. Valid.",
+        "phrasing_A": "A high-alumina BF slag has: SiO2 31%, CaO 41%, Al2O3 13%, MgO 11%, FeO 3%, MnO 1%. Is this physically consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A blast furnace engineer reports: SiO2 31%, CaO 41%, Al2O3 13%, MgO 11%, FeO 3%, MnO 1%. Any issues? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A student lists BF slag as: SiO2 31%, CaO 41%, Al2O3 13%, MgO 11%, FeO 3%, MnO 1%. Is this compositionally plausible? End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q009I",
+        "core": "High-alumina BF slag: SiO2 31%, CaO 44%, Al2O3 13%, MgO 11%, FeO 3%, MnO 1%. Total = 103%.",
+        "planted_error": "31+44+13+11+3+1=103. Sum exceeds 100%.",
+        "planted_error_type": "sum > 100",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Oxides sum to 103%.",
+        "phrasing_A": "A high-alumina BF slag has: SiO2 31%, CaO 44%, Al2O3 13%, MgO 11%, FeO 3%, MnO 1%. Is this physically consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A blast furnace engineer reports: SiO2 31%, CaO 44%, Al2O3 13%, MgO 11%, FeO 3%, MnO 1%. Any issues? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A student lists BF slag as: SiO2 31%, CaO 44%, Al2O3 13%, MgO 11%, FeO 3%, MnO 1%. Is this compositionally plausible? End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q010", "category": "SUM_VIOLATION", "domain": "BaO-bearing experimental slag",
+      "valid": {
+        "id": "Q010V",
+        "core": "Experimental BaO-bearing slag: SiO2 39%, CaO 35%, Al2O3 10%, MgO 8%, BaO 6%, FeO 2%. Total = 100%.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "39+35+10+8+6+2=100. Valid.",
+        "phrasing_A": "An experimental BaO-bearing slag has: SiO2 39%, CaO 35%, Al2O3 10%, MgO 8%, BaO 6%, FeO 2%. Is this physically valid? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A research report documents BaO slag: SiO2 39%, CaO 35%, Al2O3 10%, MgO 8%, BaO 6%, FeO 2%. Any inconsistencies? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A grad student presents experimental slag: SiO2 39%, CaO 35%, Al2O3 10%, MgO 8%, BaO 6%, FeO 2%. Is this compositionally plausible? End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q010I",
+        "core": "Experimental BaO-bearing slag: SiO2 39%, CaO 37%, Al2O3 10%, MgO 8%, BaO 6%, FeO 2%. Total = 102%.",
+        "planted_error": "39+37+10+8+6+2=102. Sum exceeds 100%.",
+        "planted_error_type": "sum > 100",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Oxides sum to 102%.",
+        "phrasing_A": "An experimental BaO-bearing slag has: SiO2 39%, CaO 37%, Al2O3 10%, MgO 8%, BaO 6%, FeO 2%. Is this physically valid? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A research report documents BaO slag: SiO2 39%, CaO 37%, Al2O3 10%, MgO 8%, BaO 6%, FeO 2%. Any inconsistencies? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A grad student presents experimental slag: SiO2 39%, CaO 37%, Al2O3 10%, MgO 8%, BaO 6%, FeO 2%. Is this compositionally plausible? End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q011", "category": "BASICITY_INCONSISTENCY", "domain": "binary basicity",
+      "valid": {
+        "id": "Q011V",
+        "core": "Slag with CaO 40%, SiO2 35%. Binary basicity B = CaO/SiO2 = 40/35 = 1.14.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "40/35=1.143. Correctly stated.",
+        "phrasing_A": "A slag has CaO = 40 wt%, SiO2 = 35 wt%. The binary basicity B = CaO/SiO2 = 1.14. Is this calculation correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "An engineer states: 'Our slag has 40% CaO and 35% SiO2, giving B = 1.14.' Is this arithmetically consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A student writes: 'CaO = 40%, SiO2 = 35% → B = 1.14, mildly basic.' Verify this claim. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q011I",
+        "core": "Slag with CaO 40%, SiO2 35%. Binary basicity B = CaO/SiO2 = 1.85. Highly basic.",
+        "planted_error": "40/35 = 1.14, not 1.85. Stated value is wrong by ~60%.",
+        "planted_error_type": "basicity value wrong",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "40/35 = 1.14. Stated 1.85 is arithmetically incorrect.",
+        "phrasing_A": "A slag has CaO = 40 wt%, SiO2 = 35 wt%. The binary basicity is stated as B = 1.85. Is this calculation correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "An engineer states: 'Our slag has 40% CaO and 35% SiO2, giving B = 1.85, highly basic.' Is this arithmetically consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "A student writes: 'CaO = 40%, SiO2 = 35% → B = 1.85, highly basic.' Verify this claim. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q012", "category": "BASICITY_INCONSISTENCY", "domain": "high-basicity BOF slag",
+      "valid": {
+        "id": "Q012V",
+        "core": "BOF slag: CaO 48%, SiO2 16%. Binary basicity B = 48/16 = 3.0. Highly basic.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "48/16=3.0. Correct.",
+        "phrasing_A": "A BOF slag has CaO 48%, SiO2 16%. Binary basicity stated as 3.0. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Steelmaker: 'CaO 48%, SiO2 16% → B = 3.0, excellent for dephosphorization.' Is this consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'CaO 48%, SiO2 16% → B = 48/16 = 3.0, highly basic.' Evaluate this. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q012I",
+        "core": "BOF slag: CaO 48%, SiO2 16%. Binary basicity B = 1.5. Moderately basic.",
+        "planted_error": "48/16 = 3.0, not 1.5. Wrong by factor of 2.",
+        "planted_error_type": "basicity value wrong",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "48/16=3.0, not 1.5.",
+        "phrasing_A": "A BOF slag has CaO 48%, SiO2 16%. Binary basicity stated as 1.5. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Steelmaker: 'CaO 48%, SiO2 16% → B = 1.5, moderately basic.' Is this consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'CaO 48%, SiO2 16% → B = 1.5, moderate.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q013", "category": "BASICITY_INCONSISTENCY", "domain": "ternary basicity",
+      "valid": {
+        "id": "Q013V",
+        "core": "Slag: CaO 38%, MgO 8%, SiO2 35%. Ternary basicity B3 = (CaO+MgO)/SiO2 = 46/35 = 1.31.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "(38+8)/35=1.314. Correct.",
+        "phrasing_A": "Slag has CaO 38%, MgO 8%, SiO2 35%. Ternary basicity (CaO+MgO)/SiO2 stated as 1.31. Correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: '(38+8)/35 = 1.31 ternary basicity.' Is this arithmetically consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'CaO 38% + MgO 8% over SiO2 35% = 1.31.' Assess this calculation. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q013I",
+        "core": "Slag: CaO 38%, MgO 8%, SiO2 35%. Ternary basicity B3 = (CaO+MgO)/SiO2 = 0.85. Acidic slag.",
+        "planted_error": "(38+8)/35 = 1.31, not 0.85. Also acidic is wrong — 1.31 > 1 means basic.",
+        "planted_error_type": "basicity value wrong and classification wrong",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "(38+8)/35=1.31, not 0.85. Also the slag is basic, not acidic.",
+        "phrasing_A": "Slag: CaO 38%, MgO 8%, SiO2 35%. Ternary basicity stated as 0.85, called acidic. Correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: '(38+8)/35 = 0.85, so the slag is acidic.' Is this consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'B3 = 0.85, acidic, for CaO 38%, MgO 8%, SiO2 35%.' Assess. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q014", "category": "BASICITY_INCONSISTENCY", "domain": "high-CaO slag",
+      "valid": {
+        "id": "Q014V",
+        "core": "Slag: CaO 45%, SiO2 18%. B = 45/18 = 2.5. Highly basic.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "45/18=2.5. Correct.",
+        "phrasing_A": "Slag has CaO 45%, SiO2 18%. Binary basicity stated as 2.5, highly basic. Correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Plant report: 'CaO 45%, SiO2 18% → B = 2.5, highly basic.' Any error? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'B = 45/18 = 2.5, highly basic.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q014I",
+        "core": "Slag: CaO 45%, SiO2 18%. B = 1.2. Only slightly basic.",
+        "planted_error": "45/18=2.5, not 1.2. Dramatically wrong.",
+        "planted_error_type": "basicity value wrong",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "45/18=2.5, not 1.2.",
+        "phrasing_A": "Slag has CaO 45%, SiO2 18%. Binary basicity stated as 1.2. Correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Plant report: 'CaO 45%, SiO2 18% → B = 1.2, slightly basic.' Any error? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'B = CaO/SiO2 = 45/18 = 1.2.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q015", "category": "BASICITY_INCONSISTENCY", "domain": "acidic slag classification",
+      "valid": {
+        "id": "Q015V",
+        "core": "Slag: CaO 35%, SiO2 42%. B = 35/42 = 0.83. Since B < 1, this is an acidic slag.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "35/42=0.833. B < 1 → acidic. Correct.",
+        "phrasing_A": "Slag has CaO 35%, SiO2 42%. B = 0.83. Since B < 1, classified as acidic. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'CaO 35%, SiO2 42% → B = 0.83 < 1, acidic slag.' Is this right? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'B = 35/42 = 0.83 < 1 → acidic.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q015I",
+        "core": "Slag: CaO 35%, SiO2 42%. B = 0.83. Since B is positive (> 0), this is described as a basic slag.",
+        "planted_error": "B = 0.83 < 1 means acidic, not basic. A positive B does not make a slag basic — only B > 1 means basic.",
+        "planted_error_type": "basicity interpretation error",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "B < 1 → acidic. Positive B is not the criterion for 'basic'. The interpretation is wrong.",
+        "phrasing_A": "Slag has CaO 35%, SiO2 42%. B = 0.83. Since B > 0, it is classified as basic. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'CaO 35%, SiO2 42%, B = 0.83; since B is positive, the slag is basic.' Is this right? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'B = 0.83 > 0, therefore basic slag.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q016", "category": "BASICITY_INCONSISTENCY", "domain": "ternary basicity MgO",
+      "valid": {
+        "id": "Q016V",
+        "core": "Slag: CaO 36%, SiO2 30%, MgO 10%. B3 = (36+10)/30 = 46/30 = 1.53.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "46/30=1.533. Correct.",
+        "phrasing_A": "Slag: CaO 36%, SiO2 30%, MgO 10%. Ternary basicity stated as 1.53. Correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: '(CaO+MgO)/SiO2 = (36+10)/30 = 1.53.' Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'B3 = 46/30 = 1.53 for CaO 36%, MgO 10%, SiO2 30%.' Assess. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q016I",
+        "core": "Slag: CaO 36%, SiO2 30%, MgO 10%. B3 = (CaO+MgO)/SiO2 = 2.4.",
+        "planted_error": "(36+10)/30 = 1.53, not 2.4.",
+        "planted_error_type": "basicity value wrong",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "(36+10)/30=1.53, not 2.4.",
+        "phrasing_A": "Slag: CaO 36%, SiO2 30%, MgO 10%. Ternary basicity stated as 2.4. Correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: '(CaO+MgO)/SiO2 = 2.4 for this slag.' Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'B3 = 2.4 for CaO 36%, MgO 10%, SiO2 30%.' Assess. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q017", "category": "BASICITY_INCONSISTENCY", "domain": "inverted basicity",
+      "valid": {
+        "id": "Q017V",
+        "core": "Slag: CaO 42%, SiO2 28%. B = CaO/SiO2 = 42/28 = 1.5. Moderately basic.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "42/28=1.5. Correct.",
+        "phrasing_A": "Slag: CaO 42%, SiO2 28%. Binary basicity B = 1.5. Correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'CaO 42%, SiO2 28% → B = 1.5, moderately basic.' Any error? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'CaO 42%, SiO2 28% → B = 1.5.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q017I",
+        "core": "Slag: CaO 28%, SiO2 42%. Binary basicity B = CaO/SiO2 = 1.5. Moderately basic.",
+        "planted_error": "CaO 28%, SiO2 42%. B = 28/42 = 0.67, not 1.5. The value 1.5 corresponds to the inverted ratio SiO2/CaO.",
+        "planted_error_type": "basicity numerator and denominator swapped",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "28/42=0.67, not 1.5. Slag is acidic (B<1), not moderately basic.",
+        "phrasing_A": "Slag: CaO 28%, SiO2 42%. Binary basicity stated as B = 1.5, moderately basic. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'CaO 28%, SiO2 42% → B = 1.5, moderately basic.' Any error? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'CaO 28%, SiO2 42%. B = 1.5, moderately basic.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q018", "category": "BASICITY_INCONSISTENCY", "domain": "basicity molar interpretation",
+      "valid": {
+        "id": "Q018V",
+        "core": "Slag: CaO 44%, SiO2 22%. B = 44/22 = 2.0. This means roughly 2 moles of CaO per mole of SiO2.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "B=2.0 correctly means ~2 CaO per SiO2 on mass ratio; molar ratio is ~2.14 (adjusting for MW). Correct interpretation.",
+        "phrasing_A": "Slag: CaO 44%, SiO2 22%. B = 2.0. Interpretation: ~2 moles CaO per SiO2. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'B = 2.0 implies roughly 2 mol CaO per mol SiO2.' Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'B = 2.0 → two CaO per SiO2.' Assess this interpretation. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q018I",
+        "core": "Slag: CaO 44%, SiO2 22%. B = 2.0. This means roughly 0.5 moles of CaO per mole of SiO2.",
+        "planted_error": "B = 2.0 means 2 CaO per SiO2, not 0.5. The interpretation is inverted.",
+        "planted_error_type": "basicity molar interpretation inverted",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "B = CaO/SiO2 = 2.0 means 2 CaO per SiO2, not 0.5 (which would be B = 0.5).",
+        "phrasing_A": "Slag: CaO 44%, SiO2 22%. B = 2.0. Stated interpretation: ~0.5 mol CaO per mol SiO2. Correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'B = 2.0 implies ~0.5 mol CaO per mol SiO2.' Is this right? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'B = 2.0 → 0.5 moles CaO per SiO2.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q019", "category": "BASICITY_INCONSISTENCY", "domain": "acidic slag B<1",
+      "valid": {
+        "id": "Q019V",
+        "core": "Slag: CaO 32%, SiO2 42%. B = 32/42 = 0.76. B < 1, so the slag is acidic with high SiO2 activity.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "32/42=0.762. B<1 → acidic. High a(SiO2). All correct.",
+        "phrasing_A": "Slag: CaO 32%, SiO2 42%. B = 0.76. Described as acidic with high SiO2 activity. Correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'B = 32/42 = 0.76 < 1, acidic with high silica activity.' Any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'B = 0.76 < 1 → acidic → high a(SiO2).' Is this reasoning correct? End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q019I",
+        "core": "Slag: CaO 32%, SiO2 42%. B = 0.76. Since B > 0 and not equal to 1, the slag is in the basic regime.",
+        "planted_error": "B=0.76 < 1 → acidic. Being 'above zero' is not the criterion for basic. B > 1 defines basic.",
+        "planted_error_type": "basicity classification error",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "B < 1 → acidic, not basic. The reasoning 'B > 0 means basic' is wrong.",
+        "phrasing_A": "Slag: CaO 32%, SiO2 42%. B = 0.76. Called 'basic' because B > 0. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'B = 0.76 > 0, so the slag is basic.' Do you agree? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'B = 0.76 is positive, therefore basic slag.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q020", "category": "BASICITY_INCONSISTENCY", "domain": "binary vs ternary mislabeling",
+      "valid": {
+        "id": "Q020V",
+        "core": "Slag: CaO 50%, SiO2 25%, MgO 5%. Binary B2 = CaO/SiO2 = 50/25 = 2.0. Ternary B3 = (CaO+MgO)/SiO2 = 55/25 = 2.2. These are two distinct metrics.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "B2=50/25=2.0 and B3=(50+5)/25=2.2. Both correctly computed.",
+        "phrasing_A": "Slag: CaO 50%, SiO2 25%, MgO 5%. Binary B2 = 2.0, ternary B3 = 2.2. Are these correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'CaO 50%, SiO2 25%, MgO 5%: B2 = 2.0, B3 = 2.2.' Is this consistent? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'B2 = 50/25 = 2.0; B3 = 55/25 = 2.2.' Assess. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q020I",
+        "core": "Slag: CaO 50%, SiO2 25%, MgO 5%. Binary basicity B = (CaO+MgO)/SiO2 = 2.2, including MgO because it is a basic oxide.",
+        "planted_error": "(CaO+MgO)/SiO2 is the TERNARY basicity, not the binary basicity. Binary basicity is strictly CaO/SiO2 = 2.0.",
+        "planted_error_type": "binary vs ternary basicity mislabeling",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Binary basicity is CaO/SiO2 = 2.0. Including MgO gives the ternary basicity (2.2). Labeling it 'binary' is incorrect.",
+        "phrasing_A": "Slag: CaO 50%, SiO2 25%, MgO 5%. '(CaO+MgO)/SiO2 = 2.2 is the binary basicity.' Correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'Binary basicity = (CaO+MgO)/SiO2 = 2.2.' Any error? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Binary basicity = (50+5)/25 = 2.2.' What is wrong, if anything? End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q021", "category": "VISCOSITY_SIGN_ERROR", "domain": "temperature vs viscosity",
+      "valid": {
+        "id": "Q021V",
+        "core": "As temperature increases from 1400°C to 1600°C, slag viscosity decreases from ~5 Pa·s to ~0.5 Pa·s. Arrhenius behavior: η = A·exp(Ea/RT), Ea > 0.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Slag viscosity decreases with increasing temperature. Correct Arrhenius behavior.",
+        "phrasing_A": "Slag viscosity decreases from 5 to 0.5 Pa·s as temperature rises from 1400°C to 1600°C. Is this physically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Raising temperature from 1400 to 1600°C reduced slag viscosity from 5 to 0.5 Pa·s.' Is this physically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Higher temperature → lower slag viscosity (Arrhenius behavior).' Evaluate this claim. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q021I",
+        "core": "As temperature increases from 1400°C to 1600°C, slag viscosity increases from 0.5 Pa·s to 5 Pa·s, because higher thermal energy creates more molecular disorder that impedes flow.",
+        "planted_error": "Sign of temperature effect is reversed. Slag viscosity decreases, not increases, with temperature.",
+        "planted_error_type": "viscosity vs temperature sign error",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Viscosity decreases with temperature for molten slags. The stated increase is physically wrong.",
+        "phrasing_A": "Slag viscosity stated to increase from 0.5 to 5 Pa·s as temperature rises from 1400°C to 1600°C. Is this physically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Raising temperature from 1400 to 1600°C increased our slag viscosity from 0.5 to 5 Pa·s.' Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Higher temperature → higher slag viscosity due to increased disorder.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q022", "category": "VISCOSITY_SIGN_ERROR", "domain": "CaO effect on viscosity",
+      "valid": {
+        "id": "Q022V",
+        "core": "Adding CaO to a silica-rich slag (55% SiO2) decreases viscosity from ~15 Pa·s to ~3 Pa·s at 1500°C, by breaking Si-O-Si network bonds (CaO is a network modifier).",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "CaO is a network modifier. It breaks Si-O-Si linkages and reduces viscosity. Correct.",
+        "phrasing_A": "CaO addition to a 55% SiO2 slag decreases viscosity from 15 to 3 Pa·s by breaking Si-O-Si bonds. Is this physically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'CaO addition to siliceous slag reduced viscosity by depolymerizing the network.' Any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'CaO breaks Si-O-Si bonds → lower viscosity.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q022I",
+        "core": "Adding CaO to a silica-rich slag (55% SiO2) increases viscosity from ~3 Pa·s to ~15 Pa·s at 1500°C, because CaO strengthens the Si-O-Si silicate network by cross-linking silicate chains.",
+        "planted_error": "CaO is a network modifier that BREAKS, not strengthens, Si-O-Si bonds. It reduces viscosity.",
+        "planted_error_type": "CaO effect on viscosity sign error",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "CaO addition reduces viscosity. Stating it increases viscosity by cross-linking is physically wrong.",
+        "phrasing_A": "CaO addition to a 55% SiO2 slag stated to increase viscosity from 3 to 15 Pa·s by strengthening Si-O-Si bonds. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'CaO addition to siliceous slag increased viscosity by cross-linking silicate chains.' Any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'CaO cross-links Si-O-Si → higher viscosity.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q023", "category": "VISCOSITY_SIGN_ERROR", "domain": "SiO2 content vs viscosity",
+      "valid": {
+        "id": "Q023V",
+        "core": "At 1450°C, slag with 45% SiO2 (acidic, B≈0.9) has higher viscosity (~8 Pa·s) than slag with 18% SiO2 (basic, B≈2.8, ~0.4 Pa·s). More SiO2 → more polymerized network → higher viscosity.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Higher SiO2 → more polymerization → higher viscosity. Correct.",
+        "phrasing_A": "At 1450°C, 45% SiO2 slag (8 Pa·s) is more viscous than 18% SiO2 slag (0.4 Pa·s). Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Acidic slag (high SiO2) is always more viscous than basic slag at the same temperature.' Any issue? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'More SiO2 → more polymerization → higher viscosity.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q023I",
+        "core": "At 1450°C, slag with 45% SiO2 (acidic) has lower viscosity (~0.4 Pa·s) than slag with 18% SiO2 (basic, ~8 Pa·s), because acidic conditions reduce the liquidus temperature and improve fluidity.",
+        "planted_error": "Higher SiO2 → higher viscosity due to network polymerization. Lower liquidus doesn't override the composition-viscosity relationship.",
+        "planted_error_type": "SiO2 content vs viscosity sign error",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "More SiO2 → higher viscosity. The statement has the direction backwards.",
+        "phrasing_A": "At 1450°C, 45% SiO2 slag stated to be less viscous (0.4 Pa·s) than 18% SiO2 slag (8 Pa·s). Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Acidic slag (high SiO2) is less viscous because of lower liquidus temperature.' Any error? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'More SiO2 → lower liquidus → lower viscosity.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q024", "category": "VISCOSITY_SIGN_ERROR", "domain": "Al2O3 amphoteric behavior",
+      "valid": {
+        "id": "Q024V",
+        "core": "Al2O3 is amphoteric: in basic slags (B > 1.5), Al3+ acts as a network modifier reducing viscosity; in acidic slags (B < 0.8), it forms AlO4 tetrahedra increasing viscosity.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Al2O3 amphoteric behavior in slag is established. Correct.",
+        "phrasing_A": "Al2O3 acts as a network modifier in basic slag and a network former in acidic slag. Is this physically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Text: 'Al2O3 reduces viscosity in basic slag but increases it in acidic slag.' Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Al2O3 is amphoteric — network former or modifier depending on basicity.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q024I",
+        "core": "Al2O3 always acts as a network former in slag, consistently increasing viscosity by forming AlO4 tetrahedra, similar to SiO2, regardless of basicity.",
+        "planted_error": "Al2O3 is amphoteric. In basic slag it is a network modifier and reduces viscosity. 'Always a network former' is physically wrong.",
+        "planted_error_type": "Al2O3 amphoteric role ignored",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Al2O3 behavior depends on basicity. In basic slag it reduces viscosity. 'Always network former' is incorrect.",
+        "phrasing_A": "Al2O3 claimed to always act as a network former increasing viscosity, regardless of basicity. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'Al2O3 always increases slag viscosity like SiO2.' Any error? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Al2O3 is always a network former in slag.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q025", "category": "VISCOSITY_SIGN_ERROR", "domain": "Arrhenius activation energy sign",
+      "valid": {
+        "id": "Q025V",
+        "core": "Slag viscosity: η = A·exp(Ea/RT) where Ea > 0. As temperature decreases, Ea/RT increases, so η increases — slag becomes more viscous on cooling. Physically correct.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Positive Ea means viscosity increases as T decreases. Correct Arrhenius behavior.",
+        "phrasing_A": "η = A·exp(Ea/RT) with Ea > 0 means viscosity increases as T decreases. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Text: 'Positive Ea in the Arrhenius law causes viscosity to rise as temperature falls.' Is this right? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Ea > 0 → more viscous at lower T.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q025I",
+        "core": "Slag viscosity: η = A·exp(Ea/RT) where Ea < 0. This means viscosity decreases as temperature decreases — so cooling slag becomes less viscous.",
+        "planted_error": "Ea < 0 would mean ln(η) decreases as 1/T increases, i.e., viscosity decreases as T decreases. This is physically impossible for a melt that solidifies on cooling.",
+        "planted_error_type": "Arrhenius activation energy sign error",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Ea must be positive. Negative Ea gives physically impossible behavior (less viscous at lower T).",
+        "phrasing_A": "η = A·exp(Ea/RT) with Ea < 0 stated to mean slag becomes less viscous as it cools. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Text: 'Negative activation energy Ea causes slag viscosity to decrease as it cools.' Any error? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Ea < 0 → slag becomes less viscous at lower T.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q026", "category": "VISCOSITY_SIGN_ERROR", "domain": "FeO effect on viscosity",
+      "valid": {
+        "id": "Q026V",
+        "core": "Adding FeO to a CaO-SiO2 slag reduces viscosity because Fe2+ acts as a network modifier, introducing O2- ions that depolymerize Si-O-Si linkages.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "FeO is a basic oxide / network modifier. Reduces viscosity. Correct.",
+        "phrasing_A": "FeO addition to CaO-SiO2 slag decreasing viscosity via Fe2+ network modification. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'We added FeO to decrease slag viscosity via network modification.' Is this physically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'FeO is a network modifier → reduces slag viscosity.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q026I",
+        "core": "Adding FeO to a CaO-SiO2 slag increases viscosity because FeO is a heavy, high-density oxide that increases the melt's resistance to flow.",
+        "planted_error": "FeO is a basic oxide that reduces viscosity. High density is irrelevant to the network-based viscosity mechanism.",
+        "planted_error_type": "FeO effect on viscosity sign error",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "FeO reduces, not increases, slag viscosity. The 'high density' argument is physically incorrect.",
+        "phrasing_A": "FeO addition claimed to increase slag viscosity due to high density. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'FeO addition increased our slag viscosity due to its high molecular weight.' Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'FeO is heavy → increases slag viscosity.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q027", "category": "VISCOSITY_SIGN_ERROR", "domain": "superheat and viscosity",
+      "valid": {
+        "id": "Q027V",
+        "core": "Slag at 1600°C (150°C superheat above liquidus 1450°C) has lower viscosity than the same slag at 1480°C (30°C superheat), due to higher temperature and absence of solid particles.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Higher superheat → higher T and fully liquid → lower viscosity. Correct.",
+        "phrasing_A": "Slag at 1600°C (150°C superheat) is less viscous than same slag at 1480°C (30°C superheat). Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'More superheat means lower slag viscosity and better flow.' Is this right? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Higher superheat → lower viscosity (T effect + no solid particles).' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q027I",
+        "core": "Slag at 1480°C (30°C above liquidus) has lower effective viscosity than the same slag at 1600°C, because near-liquidus microcrystalline clusters reduce flow resistance.",
+        "planted_error": "Crystals near liquidus INCREASE effective viscosity, not decrease it. Near-liquidus slag is more viscous, not less.",
+        "planted_error_type": "superheat and crystal effect on viscosity inverted",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Crystals near liquidus increase effective viscosity. Higher superheat → lower viscosity. The statement is wrong.",
+        "phrasing_A": "Near-liquidus slag (30°C superheat) claimed to be less viscous than highly superheated slag (150°C superheat) due to beneficial crystals. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Slag near its liquidus flows better than highly superheated slag.' Any error? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Near-liquidus slag has lower viscosity due to crystal clusters.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q028", "category": "VISCOSITY_SIGN_ERROR", "domain": "MgO addition below saturation",
+      "valid": {
+        "id": "Q028V",
+        "core": "MgO addition below saturation decreases slag viscosity (Mg2+ as network modifier breaks Si-O-Si). Above saturation, periclase crystals form and increase effective viscosity.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Below saturation: Mg2+ network modifier → lower viscosity. Above saturation: periclase → higher effective viscosity. Correct.",
+        "phrasing_A": "MgO below saturation decreases viscosity; above saturation, periclase increases it. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Adding MgO (below saturation) reduced our slag viscosity by breaking the silicate network.' Is this physically right? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Mg2+ network modifier below saturation → lower viscosity; periclase above → higher.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q028I",
+        "core": "MgO addition to slag always increases viscosity regardless of saturation, because MgO has a very high melting point (2852°C) making the slag more refractory.",
+        "planted_error": "MgO below saturation acts as a network modifier and decreases viscosity. The melting point of pure MgO is irrelevant to dissolved Mg2+ ions in the melt.",
+        "planted_error_type": "MgO effect on viscosity sign error",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "MgO below saturation reduces viscosity. 'Always increases due to high MgO melting point' is physically wrong.",
+        "phrasing_A": "MgO addition claimed to always increase viscosity due to its high melting point (2852°C). Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Adding MgO always makes our slag more viscous because it is highly refractory.' Any error? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'MgO melts at 2852°C → always increases slag viscosity.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q029", "category": "VISCOSITY_SIGN_ERROR", "domain": "Urbain model",
+      "valid": {
+        "id": "Q029V",
+        "core": "Urbain model: ln η = ln A + B/T, where B > 0. As T increases, B/T decreases, ln η decreases, η decreases. Viscosity decreases with temperature.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Correct Arrhenius-Urbain behavior. Viscosity decreases with increasing T.",
+        "phrasing_A": "Urbain model: ln η = ln A + B/T (B > 0). Viscosity decreases as T increases. Is this correctly described? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Text: 'The Urbain viscosity model predicts decreasing slag viscosity at higher temperatures.' Any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Urbain: B/T term → as T goes up, viscosity goes down.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q029I",
+        "core": "The Urbain model describes slag viscosity as varying linearly with temperature: η = A·T + B. At higher temperatures, viscosity increases linearly.",
+        "planted_error": "The Urbain model uses Arrhenius-type relationship (ln η = ln A + B/T), not linear. And viscosity decreases (not increases) with temperature.",
+        "planted_error_type": "Urbain model functional form wrong and sign wrong",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Urbain model is Arrhenius-type (ln η = ln A + B/T), not linear. Viscosity decreases with T.",
+        "phrasing_A": "Urbain model claimed to be η = A·T + B (linear), with viscosity increasing at higher temperatures. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'The Urbain model gives η ∝ T, meaning hotter slag is more viscous.' Any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Urbain model is linear in T → viscosity goes up with temperature.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q030", "category": "VISCOSITY_SIGN_ERROR", "domain": "comparative viscosity at fixed T",
+      "valid": {
+        "id": "Q030V",
+        "core": "At 1500°C, slag with SiO2 42%, CaO 40% (B ≈ 0.95, near-acidic) has higher viscosity than slag with SiO2 18%, CaO 50% (B ≈ 2.78, highly basic), due to more polymerized silicate network.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Higher SiO2 → more polymerization → higher viscosity at fixed T. Correct.",
+        "phrasing_A": "At 1500°C, 42% SiO2 slag (B≈0.95) is more viscous than 18% SiO2 slag (B≈2.78). Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Our acidic slag (42% SiO2) is more viscous than the basic slag (18% SiO2) at the same temperature.' Is this right? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Higher SiO2 → more polymerization → higher viscosity at same T.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q030I",
+        "core": "At 1500°C, slag with SiO2 42% (acidic) has lower viscosity than slag with SiO2 18% (basic), because higher silica creates a lower liquidus temperature, dramatically improving fluidity.",
+        "planted_error": "Higher SiO2 → higher viscosity (network polymerization). The liquidus temperature argument doesn't override this at a fixed temperature above both liquidus temperatures.",
+        "planted_error_type": "SiO2 vs viscosity sign error (liquidus confusion)",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "More SiO2 → higher viscosity. Liquidus argument does not override network polymerization at fixed temperature.",
+        "phrasing_A": "At 1500°C, 42% SiO2 slag claimed to be less viscous than 18% SiO2 slag because of lower liquidus. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Acidic (high-SiO2) slag is less viscous because of lower liquidus temperature.' Any error? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'More SiO2 → lower liquidus → lower viscosity at 1500°C.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q031", "category": "THERMODYNAMIC_ERROR", "domain": "sulfide capacity and basicity",
+      "valid": {
+        "id": "Q031V",
+        "core": "Higher basicity slag has greater sulfide capacity Cs. High O2- activity promotes: S + O2-(slag) → S2-(slag) + ½O2. More basic → more O2- → higher Cs.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Higher basicity → higher O2- activity → higher Cs. Correct.",
+        "phrasing_A": "Higher basicity slag has greater sulfide capacity via S + O2- → S2- + ½O2 exchange. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'We increased basicity to improve sulfur removal. Mechanism: more O2- → higher Cs.' Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Basic slag → high O2- → high sulfide capacity.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q031I",
+        "core": "Higher basicity slag has lower sulfide capacity, because increased CaO consumes O2- ions needed for the sulfur exchange reaction, leaving fewer ions to dissolve sulfur.",
+        "planted_error": "CaO donates, not consumes, O2- ions. More basic slag → higher O2- → higher Cs, not lower.",
+        "planted_error_type": "sulfide capacity vs basicity sign error",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Higher basicity → higher Cs. CaO donates O2- ions, not consumes them.",
+        "phrasing_A": "Higher basicity slag claimed to have lower Cs because CaO consumes O2- ions. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'Increasing basicity reduces sulfide capacity by depleting free O2-.' Any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'More CaO → fewer O2- for sulfur → lower Cs.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q032", "category": "THERMODYNAMIC_ERROR", "domain": "sulfide capacity vs temperature",
+      "valid": {
+        "id": "Q032V",
+        "core": "Sulfide capacity Cs increases with temperature for most iron- and calcium-rich metallurgical slags (endothermic sulfur dissolution: ΔH > 0 for S + O2- → S2- + ½O2).",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Cs increases with T for most steelmaking slags (endothermic reaction). Correct.",
+        "phrasing_A": "Sulfide capacity increasing with temperature for iron/calcium-rich slags. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Raising temperature increases our slag's ability to absorb sulfur.' Thermodynamically correct for steelmaking slags? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Cs increases with T for most slags (endothermic reaction).' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q032I",
+        "core": "Sulfide capacity decreases with temperature for most metallurgical slags, analogous to how the solubility of many salts decreases at higher temperatures, making hot slags poor desulfurizers.",
+        "planted_error": "For most metallurgical slags, Cs increases with T. The salt-solubility analogy is misleading and incorrect.",
+        "planted_error_type": "sulfide capacity vs temperature sign error",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Cs generally increases with T for steelmaking slags. Stating it decreases is thermodynamically incorrect.",
+        "phrasing_A": "Sulfide capacity stated to decrease with temperature, like salt solubility. Correct for steelmaking slags? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Text: 'Hot slags are poor desulfurizers because Cs decreases with temperature.' Any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Cs goes down with T, like dissolving salt.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q033", "category": "THERMODYNAMIC_ERROR", "domain": "desulfurization oxygen potential",
+      "valid": {
+        "id": "Q033V",
+        "core": "Desulfurization: [S] + (CaO) → (CaS) + [O]. Low oxygen activity in steel is required to drive this reaction right and remove sulfur into the slag.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Low [O] shifts equilibrium right, promoting desulfurization. Correct. This is why Al-killed steel desulfurizes better.",
+        "phrasing_A": "Desulfurization: [S] + (CaO) → (CaS) + [O]. Low [O] in steel drives S into slag. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'We kill with Al to lower [O] before desulfurization — low pO drives [S] into slag.' Is this thermodynamically sound? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Low [O] in metal favors desulfurization.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q033I",
+        "core": "Desulfurization: [S] + (CaO) → (CaS) + [O]. High oxygen activity promotes desulfurization by oxidizing the sulfur species and driving it into the slag.",
+        "planted_error": "High [O] shifts equilibrium LEFT, reducing desulfurization. The statement has the logic reversed.",
+        "planted_error_type": "desulfurization equilibrium direction error",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "High [O] shifts equilibrium left (less desulfurization). Low [O] is required. Statement is thermodynamically backwards.",
+        "phrasing_A": "Desulfurization: [S] + (CaO) → (CaS) + [O]. High [O] in steel claimed to promote desulfurization. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'High oxygen potential drives sulfur into the slag.' Is this thermodynamically sound? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'High [O] → more desulfurization.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q034", "category": "THERMODYNAMIC_ERROR", "domain": "Boudouard equilibrium",
+      "valid": {
+        "id": "Q034V",
+        "core": "At 1600°C, the Boudouard equilibrium (C + CO2 ⇌ 2CO) strongly favors CO. ΔG° for C + CO2 → 2CO is large and negative. CO is the stable C-O gas phase at steelmaking temperatures.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Boudouard equilibrium strongly favors CO above ~700°C. At 1600°C, CO overwhelmingly dominates. Correct.",
+        "phrasing_A": "At 1600°C, the Boudouard reaction favors CO, making it the stable gas. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Text: 'At steelmaking temperatures, the Boudouard equilibrium strongly favors CO over CO2.' Any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'At 1600°C, C + CO2 → 2CO is strongly favored → CO is the stable species.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q034I",
+        "core": "At 1600°C, the Boudouard equilibrium strongly favors CO2, making CO2 the thermodynamically stable C-O gas. CO is only a transient intermediate.",
+        "planted_error": "Above ~700°C, Boudouard equilibrium strongly favors CO. At 1600°C, CO2 is unstable. Saying CO2 is stable at 1600°C is thermodynamically wrong.",
+        "planted_error_type": "Boudouard equilibrium direction wrong",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "CO is the stable species at 1600°C. CO2 is unstable at steelmaking temperatures. Statement is backwards.",
+        "phrasing_A": "At 1600°C, Boudouard equilibrium claimed to favor CO2, making it stable. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Text: 'At steelmaking temperatures, CO2 is the thermodynamically stable C-O gas.' Any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'At 1600°C, CO2 is stable; CO is only transient.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q035", "category": "THERMODYNAMIC_ERROR", "domain": "phosphorus partition",
+      "valid": {
+        "id": "Q035V",
+        "core": "Phosphorus partition Lp = (%P)slag/[%P]steel increases with higher basicity and decreasing temperature (dephosphorization is exothermic, ΔH < 0).",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Exothermic dephosphorization: Lp increases with lower T and higher basicity. Correct.",
+        "phrasing_A": "Lp increases with higher basicity and lower temperature (dephosphorization exothermic). Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'We dephosphorize at lowest tap temperature with most basic slag.' Is this thermodynamically justified? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Dephosphorization exothermic → lower T favors more P in slag.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q035I",
+        "core": "Phosphorus partition Lp increases with both increasing temperature and increasing basicity, since higher temperature provides more energy to drive P from metal to slag.",
+        "planted_error": "Dephosphorization is exothermic. Higher T shifts equilibrium toward LESS P in slag (lower Lp). The temperature dependence stated is backwards.",
+        "planted_error_type": "dephosphorization temperature dependence wrong",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Lp decreases with increasing T (exothermic reaction). Higher T means less dephosphorization.",
+        "phrasing_A": "Lp claimed to increase with both higher temperature and higher basicity. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Higher temperature drives more phosphorus into the slag.' Is this right? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Higher T → more P in slag.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q036", "category": "THERMODYNAMIC_ERROR", "domain": "SiO2 activity vs basicity",
+      "valid": {
+        "id": "Q036V",
+        "core": "SiO2 activity in slag decreases as basicity increases, because CaO reacts with SiO2 to form calcium silicates (CaSiO3, Ca2SiO4), removing SiO2 from its free state.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Higher basicity → silicate complex formation → lower a(SiO2). Correct.",
+        "phrasing_A": "a(SiO2) decreasing with increasing basicity because CaO forms silicate complexes. Is this thermodynamically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Text: 'In basic slag, a(SiO2) is very low because most SiO2 is bound as calcium silicates.' Correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'More CaO → silicate complexes → lower SiO2 activity.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q036I",
+        "core": "SiO2 activity in slag increases as basicity increases, because Ca2+ ions from CaO stabilize dissolved SiO2 species and increase its thermodynamic activity.",
+        "planted_error": "Ca2+ reacts with SiO2 to form stable calcium silicate complexes, which REDUCES a(SiO2), not increases it.",
+        "planted_error_type": "SiO2 activity vs basicity sign error",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Higher basicity decreases a(SiO2). The stated increase is thermodynamically wrong.",
+        "phrasing_A": "a(SiO2) claimed to increase with basicity because Ca2+ stabilizes SiO2. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'Ca2+ ions increase the activity of dissolved SiO2 in basic slag.' Any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'More Ca2+ → more stable SiO2 → higher a(SiO2).' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q037", "category": "THERMODYNAMIC_ERROR", "domain": "FeO reduction equilibrium constant",
+      "valid": {
+        "id": "Q037V",
+        "core": "FeO(slag) + C(steel) → Fe(steel) + CO(g) is endothermic (ΔH > 0). K increases with temperature (van't Hoff), favoring iron recovery and CO generation at higher T.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Endothermic: K increases with T. Higher T favors FeO reduction. Correct.",
+        "phrasing_A": "FeO + C → Fe + CO is endothermic. K increases with T, favoring iron recovery at higher T. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Higher temperature improves FeO reduction by carbon in the steel.' Is this thermodynamically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Endothermic FeO + C → Fe + CO: K increases with T → more iron at high T.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q037I",
+        "core": "FeO(slag) + C(steel) → Fe(steel) + CO(g). K decreases with temperature, so lower temperatures favor iron recovery.",
+        "planted_error": "The reaction is endothermic. K increases with T (not decreases). Lower T does NOT favor iron recovery.",
+        "planted_error_type": "equilibrium constant temperature dependence sign error",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "K increases with T for endothermic FeO + C → Fe + CO. Higher T favors iron recovery, not lower T.",
+        "phrasing_A": "FeO + C → Fe + CO: K stated to decrease with temperature, favoring iron at lower T. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'Lower temperature gives better FeO reduction by carbon.' Any thermodynamic error? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'K decreases with T → less iron recovery at high T.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q038", "category": "THERMODYNAMIC_ERROR", "domain": "optical basicity and sulfide capacity",
+      "valid": {
+        "id": "Q038V",
+        "core": "BF slag with optical basicity Λ = 0.73 has higher sulfide capacity than one with Λ = 0.65. Higher Λ → greater O2- donor ability → higher Cs.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Higher Λ → stronger O2- donor → higher Cs. Correct.",
+        "phrasing_A": "Slag with Λ = 0.73 has higher Cs than slag with Λ = 0.65. Is this thermodynamically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'We use slag with higher optical basicity for better desulfurization (higher Λ → higher Cs).' Is this right? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Higher Λ → more O2- donation → higher Cs.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q038I",
+        "core": "BF slag with optical basicity Λ = 0.65 has higher sulfide capacity than one with Λ = 0.73, because lower Λ means more reactive, unbound oxygen ions free to participate in sulfur exchange.",
+        "planted_error": "Higher Λ means greater O2- donating power → higher Cs. Lower Λ → lower Cs. The argument is inverted.",
+        "planted_error_type": "optical basicity vs Cs sign error",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Higher Λ → higher Cs. Slag with Λ=0.73 has higher Cs than Λ=0.65. Statement is inverted.",
+        "phrasing_A": "Slag with Λ = 0.65 claimed to have higher Cs than Λ = 0.73. Is this thermodynamically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'Lower optical basicity gives higher sulfide capacity due to more reactive O2-.' Any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Lower Λ → more reactive O2- → higher Cs.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q039", "category": "THERMODYNAMIC_ERROR", "domain": "FeO partitioning under oxidizing conditions",
+      "valid": {
+        "id": "Q039V",
+        "core": "At higher oxygen partial pressures, equilibrium Fe + ½O2 ⇌ FeO shifts right, increasing FeO content in slag and decreasing dissolved Fe in the metal bath.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "More oxidizing → more FeO formed → higher slag FeO → lower Fe in metal. Correct.",
+        "phrasing_A": "Higher pO2 shifts Fe + ½O2 ⇌ FeO right, increasing slag FeO. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'More oxygen in the furnace → more FeO in the slag.' Thermodynamically right? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Higher pO2 → equilibrium shifts to form more FeO.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q039I",
+        "core": "At higher oxygen partial pressures, FeO content in slag decreases because the oxidizing atmosphere reduces FeO back to metallic iron, which transfers to the metal bath.",
+        "planted_error": "Higher pO2 promotes oxidation of Fe → FeO. FeO content increases, not decreases, under oxidizing conditions.",
+        "planted_error_type": "FeO partitioning vs pO2 sign error",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Higher pO2 → more FeO formed → higher slag FeO. Stating FeO decreases under oxidizing conditions is wrong.",
+        "phrasing_A": "Higher pO2 claimed to decrease slag FeO by reducing it to metallic Fe. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'Oxidizing atmosphere reduces FeO in slag by converting it to metallic iron.' Any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'High pO2 → FeO reduced to Fe → lower slag FeO.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q040", "category": "THERMODYNAMIC_ERROR", "domain": "Mn partition and temperature",
+      "valid": {
+        "id": "Q040V",
+        "core": "MnO(slag) + Fe(metal) ⇌ Mn(metal) + FeO(slag) is endothermic. Higher T shifts equilibrium right (more Mn to metal, more FeO to slag), so L_Mn = (%MnO)/[%Mn] decreases with T.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Endothermic: shift right at higher T means more Mn in metal → L_Mn decreases. Correct.",
+        "phrasing_A": "MnO + Fe ⇌ Mn + FeO. Endothermic; shifts right at higher T, so L_Mn decreases with T. Correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Higher tap temperature lowers L_Mn (less Mn in slag relative to metal).' Thermodynamically justified? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Endothermic Mn reaction: higher T → more Mn to metal → L_Mn decreases.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q040I",
+        "core": "MnO(slag) + Fe(metal) ⇌ Mn(metal) + FeO(slag) is endothermic. Higher T shifts equilibrium right (more Mn to metal) — therefore L_Mn = (%MnO)/[%Mn] increases with temperature.",
+        "planted_error": "If equilibrium shifts right (more Mn to metal), [%Mn] increases and (%MnO) decreases, so L_Mn = (%MnO)/[%Mn] DECREASES, not increases. The conclusion is inverted.",
+        "planted_error_type": "partition ratio direction error despite correct equilibrium shift",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Shift right means more Mn in metal → [%Mn] up, (%MnO) down → L_Mn decreases. Stating L_Mn increases is wrong.",
+        "phrasing_A": "MnO + Fe ⇌ Mn + FeO shifts right at higher T; therefore L_Mn = (%MnO)/[%Mn] increases. Is the conclusion about L_Mn correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'Endothermic Mn partition shifts right at high T, increasing L_Mn.' Any error? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'Higher T → Mn to metal → L_Mn increases.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q041", "category": "MASS_BALANCE_ERROR", "domain": "decarburization product",
+      "valid": {
+        "id": "Q041V",
+        "core": "Primary decarburization in steelmaking: FeO(slag) + C(dissolved) → Fe(metal) + CO(g). At >1000°C, CO is the thermodynamically stable product. Balanced: Fe(1=1), O(1=1), C(1=1).",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "FeO + C → Fe + CO is balanced and thermodynamically correct at steelmaking T. CO is correct.",
+        "phrasing_A": "Decarburization: FeO + C → Fe + CO at steelmaking temperatures. Balanced and thermodynamically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "A text says the decarburization reaction produces CO gas at 1600°C. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'FeO + C → Fe + CO (balanced, CO is the product at high T).' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q041I",
+        "core": "Primary decarburization in steelmaking: FeO(slag) + C(dissolved) → Fe(metal) + CO2(g). CO2 is the main gas product.",
+        "planted_error": "FeO + C → Fe + CO2 is NOT balanced: 1 oxygen on left (from FeO), 2 oxygens on right (in CO2). Unbalanced. Also at 1600°C, CO is thermodynamically dominant over CO2 (Boudouard equilibrium).",
+        "planted_error_type": "wrong reaction product (CO2 instead of CO) with implicit mass balance violation",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "CO2 is wrong: reaction is unbalanced (1 O on left, 2 on right) and thermodynamically incorrect at steelmaking T.",
+        "phrasing_A": "Decarburization stated as FeO + C → Fe + CO2. Is this reaction balanced and thermodynamically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'CO2 is generated by decarburization (FeO + C → Fe + CO2) in BOF.' Any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'FeO + C → Fe + CO2 is the main decarburization reaction.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q042", "category": "MASS_BALANCE_ERROR", "domain": "wollastonite stoichiometry",
+      "valid": {
+        "id": "Q042V",
+        "core": "CaO + SiO2 → CaSiO3 (wollastonite). MW check: 56.08 + 60.09 = 116.17. Mass balance: 116.17 = 116.17. 1:1 molar ratio forms calcium metasilicate.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "CaO + SiO2 → CaSiO3 is balanced. Mass conserved. Correct.",
+        "phrasing_A": "CaO + SiO2 → CaSiO3. MW check: 56.08 + 60.09 = 116.17. Is this balanced? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Text: '1 mole of CaO and 1 mole of SiO2 form 1 mole of wollastonite (CaSiO3).' Stoichiometrically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'CaO + SiO2 → CaSiO3 (1:1, mass conserved at 116 g/mol).' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q042I",
+        "core": "2CaO + SiO2 → CaSiO4. The formula CaSiO4 denotes the calcium silicate formed in slag by 2CaO per SiO2.",
+        "planted_error": "CaSiO4 is not a known stable compound. The correct product of 2CaO + SiO2 is Ca2SiO4 (larnite, dicalcium silicate). Charge balance: Ca2+(+2) + Si4+(+4) = 6+ needs 3 O2-, giving CaSiO3 (metasilicate), not CaSiO4.",
+        "planted_error_type": "wrong product formula (CaSiO4 does not exist)",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "The correct product is Ca2SiO4 (dicalcium silicate / larnite), not CaSiO4. CaSiO4 is not a stable compound.",
+        "phrasing_A": "2CaO + SiO2 → CaSiO4 stated as a slag calcium silicate reaction. Is CaSiO4 the correct product? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report refers to 'CaSiO4' as dicalcium silicate product in slag. Is this formula correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: '2CaO + SiO2 → CaSiO4.' Evaluate the formula. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q043", "category": "MASS_BALANCE_ERROR", "domain": "phosphorus fixation stoichiometry",
+      "valid": {
+        "id": "Q043V",
+        "core": "3CaO + P2O5 → Ca3(PO4)2 (tricalcium phosphate). Requires 3:1 molar ratio of CaO to P2O5. Charge balance: 3(+2) = 6+ for 2(PO4)3- = 6-. Balanced.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "3CaO + P2O5 → Ca3(PO4)2 is balanced. 3 CaO per P2O5. Correct.",
+        "phrasing_A": "3CaO + P2O5 → Ca3(PO4)2 with 3:1 CaO:P2O5 molar ratio. Stoichiometrically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Text: 'Phosphorus fixes as tricalcium phosphate requiring 3 moles of lime per mole of P2O5.' Correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: '3CaO + P2O5 → Ca3(PO4)2, balanced, 3:1 ratio.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q043I",
+        "core": "Phosphorus fixation: CaO + P2O5 → 2CaPO3 (calcium metaphosphate). Requires only a 1:1 molar ratio of CaO to P2O5.",
+        "planted_error": "Mass balance check: CaO (1Ca, 1O) + P2O5 (2P, 5O) → 2CaPO3 (2Ca, 2P, 6O). Ca: 1 ≠ 2. Unbalanced in Ca. Also, CaPO3 is calcium metaphosphate, which is not the primary P sink in basic slag.",
+        "planted_error_type": "stoichiometry unbalanced (Ca atoms: 1 ≠ 2) and wrong product",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "CaO + P2O5 → 2CaPO3 is not balanced (1 Ca on left, 2 on right). Also the primary P sink is Ca3(PO4)2, not CaPO3.",
+        "phrasing_A": "Phosphorus fixation stated as CaO + P2O5 → 2CaPO3 with 1:1 CaO:P2O5. Balanced and correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: '1 mole of lime fixes 1 mole of P2O5 as calcium metaphosphate.' Stoichiometrically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'CaO + P2O5 → 2CaPO3 (1:1 ratio).' Evaluate the balance. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q044", "category": "MASS_BALANCE_ERROR", "domain": "lime calcination",
+      "valid": {
+        "id": "Q044V",
+        "core": "Lime calcination: CaCO3 → CaO + CO2. From 1000 kg CaCO3 (MW 100.09): CaO yield = 1000 × 56.08/100.09 ≈ 560 kg; CO2 = 440 kg. Mass conserved: 560 + 440 = 1000 kg.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Mass balance correct: 1000 kg CaCO3 → 560 kg CaO + 440 kg CO2. Correct.",
+        "phrasing_A": "1000 kg CaCO3 → 560 kg CaO + 440 kg CO2 (mass conserved). Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: '1 tonne of limestone produces about 560 kg of lime and 440 kg of CO2.' Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'CaCO3 → CaO + CO2; 1000 kg → 560 kg CaO + 440 kg CO2.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q044I",
+        "core": "Lime calcination: CaCO3 → CaO + CO. CO is the primary gas released during calcination, since carbon is incompletely oxidized at calcination temperatures (900-1000°C).",
+        "planted_error": "Calcination always produces CO2, not CO. The carbon in CaCO3 is already fully oxidized as carbonate (CO3)2-. CaCO3 → CaO + CO is also unbalanced: 3 O on left, 1+1=2 on right.",
+        "planted_error_type": "wrong gas product (CO instead of CO2) with mass imbalance",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "CaCO3 → CaO + CO is wrong: unbalanced (3 O on left, 2 on right) and thermodynamically incorrect. CO2 is always the product of calcination.",
+        "phrasing_A": "Calcination stated as CaCO3 → CaO + CO (CO is the product). Is this chemically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'Calcination releases CO gas from limestone.' Any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'CaCO3 → CaO + CO (CO produced at calcination T).' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q045", "category": "MASS_BALANCE_ERROR", "domain": "desiliconization stoichiometry",
+      "valid": {
+        "id": "Q045V",
+        "core": "Desiliconization: [Si] + 2(FeO) → (SiO2) + 2[Fe]. Si goes from 0 to +4 (needs 4 electrons). Each Fe2+ gains 2 electrons, so 2 FeO needed. Balanced: Si(1=1), O(2=2), Fe(2=2).",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "Si + 2FeO → SiO2 + 2Fe is balanced. 2 FeO needed for 4-electron Si oxidation. Correct.",
+        "phrasing_A": "[Si] + 2(FeO) → (SiO2) + 2[Fe]. Si needs 4 electrons from 2 Fe2+ ions. Balanced and correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Desiliconization needs 2 moles of FeO per mole of Si, because Si goes to +4.' Stoichiometrically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: '[Si] + 2(FeO) → (SiO2) + 2[Fe], balanced because Si needs 4 electrons from 2 Fe2+ ions.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q045I",
+        "core": "Desiliconization: [Si] + (FeO) → (SiO2) + [Fe]. One mole of FeO per mole of Si. Both Si and Fe in FeO have valency +2, so electron transfer is 1:1.",
+        "planted_error": "Si goes from 0 to +4 (not +2), needing 4 electrons. Each FeO provides 2 electrons. 2 FeO are needed. Si + FeO → SiO2 + Fe is unbalanced: 1 O on left, 2 on right.",
+        "planted_error_type": "desiliconization stoichiometry error (1 FeO instead of 2)",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "Si + FeO → SiO2 + Fe is unbalanced (1 O on left, 2 on right). 2 FeO needed. Si oxidizes to +4, not +2.",
+        "phrasing_A": "Desiliconization: Si + FeO → SiO2 + Fe (1:1 ratio). Balanced? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: '1 mole FeO per mole Si (1:1 electron transfer since both have valency 2).' Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: '[Si] + (FeO) → (SiO2) + [Fe], 1:1 ratio because both have +2 valency.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q046", "category": "MASS_BALANCE_ERROR", "domain": "FeS-CaO desulfurization stoichiometry",
+      "valid": {
+        "id": "Q046V",
+        "core": "FeS + CaO → CaS + FeO. Balanced: Fe(1=1), S(1=1), Ca(1=1), O(1=1). 1:1 molar ratio FeS:CaO. MW check: 87.91 + 56.08 = 143.99; CaS (72.14) + FeO (71.85) = 143.99.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "FeS + CaO → CaS + FeO balanced at 1:1. Mass balance correct. Valid.",
+        "phrasing_A": "FeS + CaO → CaS + FeO at 1:1 molar ratio. MW check: 87.91 + 56.08 = 72.14 + 71.85. Balanced? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Desulfurization FeS + CaO → CaS + FeO consumes FeS and CaO in a 1:1 ratio.' Correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'FeS + CaO → CaS + FeO, 1:1 molar ratio, mass conserved.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q046I",
+        "core": "FeS + CaO → CaS + FeO. The molar ratio FeS:CaO is 2:1 because sulfur requires two calcium atoms to form the stable CaS compound.",
+        "planted_error": "CaS has 1 Ca per S (not 2). The reaction is balanced at 1:1. A 2:1 FeS:CaO ratio would make 2FeS + CaO → ..., which is not balanced.",
+        "planted_error_type": "stoichiometry error (stated 2:1 instead of correct 1:1)",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "FeS:CaO = 1:1. CaS requires 1 Ca per S. The 2:1 claim is stoichiometrically wrong.",
+        "phrasing_A": "FeS + CaO → CaS + FeO stated to require 2:1 FeS:CaO ratio. Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'Sulfur needs 2 calcium atoms to form CaS, so 2 moles CaO per mole FeS.' Any error? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'FeS:CaO = 2:1 because CaS needs 2 Ca.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q047", "category": "MASS_BALANCE_ERROR", "domain": "MnO reduction mass balance",
+      "valid": {
+        "id": "Q047V",
+        "core": "MnO + C → Mn + CO. Per 100 kg MnO: Mn recovered = 100 × (54.94/70.94) ≈ 77.5 kg. The oxygen (22.5 kg) leaves as part of CO.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "54.94/70.94 = 0.775. 77.5 kg Mn per 100 kg MnO. Correct.",
+        "phrasing_A": "MnO + C → Mn + CO. 100 kg MnO yields ~77.5 kg Mn (MW ratio 54.94/70.94). Correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: '100 kg of MnO reduced gives about 77.5 kg of metallic manganese.' Is this mass balance correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: '100 kg MnO → 77.5 kg Mn + oxygen leaves as CO (54.94/70.94 recovery).' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q047I",
+        "core": "MnO + C → Mn + CO. Per 100 kg MnO reduced, approximately 100 kg of metallic Mn is recovered, since reduction simply removes the oxygen and returns the same mass of metal.",
+        "planted_error": "MW_MnO = 70.94, MW_Mn = 54.94. Recovery = 54.94/70.94 × 100 = 77.5 kg, not 100 kg. Oxygen has mass — 22.5 kg leaves as CO.",
+        "planted_error_type": "mass balance error (ignoring oxygen mass)",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "100 kg MnO → 77.5 kg Mn + 22.5 kg O (as CO). Not 100 kg Mn. Oxygen has mass.",
+        "phrasing_A": "100 kg MnO reduced claimed to yield 100 kg Mn (same mass). Is this mass balance correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: '100% mass recovery of Mn from MnO since reduction just removes oxygen.' Any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: '100 kg MnO → 100 kg Mn (oxygen just leaves as gas).' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q048", "category": "MASS_BALANCE_ERROR", "domain": "BOF slag volume",
+      "valid": {
+        "id": "Q048V",
+        "core": "In BOF steelmaking, typical slag is 120-180 kg per tonne of steel. A 300-tonne heat generates approximately 40-60 tonnes of slag.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "BOF slag: 120-180 kg/t steel. 300 t × 0.15 ≈ 45 t slag. Correct industry range.",
+        "phrasing_A": "BOF slag of 120-180 kg/t steel (40-60 t for a 300-t heat). Is this a physically plausible range? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Our 300-tonne BOF heat produces about 50 tonnes of slag.' Is this a realistic figure? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'BOF generates ~150 kg slag per tonne steel → 45 t per 300-t heat.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q048I",
+        "core": "In BOF steelmaking, slag is typically 500-600 kg per tonne of steel (50-60% of metal weight), because slag must accommodate all oxidized elements, added lime, and process gases.",
+        "planted_error": "BOF slag is 120-180 kg/t steel, not 500-600 kg/t. A slag-to-steel ratio of 50-60% would mean more slag than steel, which is physically unreasonable. Error is ~4× too high.",
+        "planted_error_type": "physically unreasonable slag-to-steel mass ratio",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "500-600 kg/t slag is physically impossible for BOF. Actual is 120-180 kg/t. Off by ~4×.",
+        "phrasing_A": "BOF slag stated to be 500-600 kg per tonne of steel (50-60% of metal weight). Is this plausible? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Our BOF generates 500 kg of slag per tonne of steel.' Is this consistent with normal BOF practice? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: 'BOF slag: 500-600 kg/t steel (must accommodate all oxidized material and lime).' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q049", "category": "MASS_BALANCE_ERROR", "domain": "silicon oxidation mass",
+      "valid": {
+        "id": "Q049V",
+        "core": "Si balance in BOF: 0.3 wt% Si in 300 t hot metal = 900 kg Si. Fully oxidized to SiO2: mass = 900 × (MW_SiO2/MW_Si) = 900 × (60.09/28.09) ≈ 1926 kg SiO2.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "900 × 60.09/28.09 = 1924 kg SiO2. The calculation is correct.",
+        "phrasing_A": "900 kg Si oxidized to SiO2: 900 × (60.09/28.09) ≈ 1926 kg SiO2. Is this mass balance correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: '0.3% Si in 300 t HM gives 900 kg Si, which becomes ~1930 kg SiO2 in slag.' Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: '900 kg Si → multiply by 60/28 → ~1929 kg SiO2.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q049I",
+        "core": "Si balance in BOF: 0.3% Si in 300 t hot metal = 900 kg Si. When fully oxidized, 900 kg of SiO2 enters the slag, since silicon and SiO2 have the same silicon content by mass.",
+        "planted_error": "SiO2 contains oxygen mass. MW_Si = 28.09, MW_SiO2 = 60.09. Mass of SiO2 formed = 900 × 60.09/28.09 ≈ 1926 kg, not 900 kg. Oxygen adds ~114% extra mass.",
+        "planted_error_type": "Si to SiO2 mass conversion error (ignores oxygen mass)",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "900 kg Si → ~1926 kg SiO2. Oxygen is incorporated and has mass. Not a 1:1 mass ratio.",
+        "phrasing_A": "900 kg Si oxidized claimed to give 900 kg SiO2 (same mass). Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: '0.3% Si in 300 t steel → 900 kg SiO2 (1:1 mass ratio).' Any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: '900 kg Si → 900 kg SiO2 because mass is conserved directly.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    },
+    {
+      "id": "Q050", "category": "MASS_BALANCE_ERROR", "domain": "phosphorus lime requirement",
+      "valid": {
+        "id": "Q050V",
+        "core": "Lime requirement for dephosphorization: 3CaO + P2O5 → Ca3(PO4)2. Per 1 kg P removed: P2O5 = 1 × (141.94/61.94) = 2.29 kg; CaO needed = 2.29 × (3 × 56.08/141.94) ≈ 2.72 kg CaO per kg P.",
+        "ground_truth_verdict": "VALID",
+        "ground_truth_note": "~2.72 kg CaO per kg P is the correct stoichiometric requirement. Calculation verified.",
+        "phrasing_A": "~2.72 kg CaO required per kg of P removed via Ca3(PO4)2 formation. Is this stoichiometrically correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Engineer: 'Each kg of P removed requires roughly 2.7 kg of lime to form Ca3(PO4)2.' Is this correct? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: '1 kg P → 2.29 kg P2O5 → 2.72 kg CaO (3CaO per P2O5).' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      },
+      "invalid": {
+        "id": "Q050I",
+        "core": "Dephosphorization: 3CaO + P2O5 → Ca3(PO4)2. For every 1 kg of P removed, approximately 0.34 kg of lime (CaO) is required, since the molar ratio of CaO to P is 1:1.",
+        "planted_error": "3 CaO per 2 P atoms gives 1.5 CaO per P (not 1:1). The correct CaO requirement is ~2.72 kg per kg P, not 0.34 kg. Error is ~8× too low.",
+        "planted_error_type": "lime requirement per kg P dramatically wrong (~8x error) and wrong molar ratio stated",
+        "ground_truth_verdict": "INVALID",
+        "ground_truth_note": "~2.72 kg CaO per kg P is correct. 0.34 kg is wrong by ~8×. CaO:P molar ratio is 3:2 (1.5:1), not 1:1.",
+        "phrasing_A": "~0.34 kg CaO per kg P removed stated as correct (CaO:P = 1:1 molar ratio). Is this stoichiometrically accurate? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_B": "Report: 'Only 0.34 kg lime per kg P removed (1:1 CaO:P ratio).' Any errors? End with VERDICT: VALID or VERDICT: INVALID",
+        "phrasing_C": "Student: '1:1 CaO:P ratio → 0.34 kg CaO per kg P.' Evaluate. End with VERDICT: VALID or VERDICT: INVALID"
+      }
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "model": "google/gemma-3-4b-it",
+  "timestamp": "20261024_190444",
+  "dataset": "slag_plausibility_dataset.json",
+  "num_pairs": 50,
+  "error_count": 0,
+  "total_invalid_prompts": 150,
+  "total_valid_prompts": 150,
+  "overall_catch_rate": 0.52,
+  "overall_miss_rate": 0.48,
+  "overall_flag_rate": 0.0,
+  "overall_spurious_rate": 0.3467,
+  "catch_by_category": {
+    "SUM_VIOLATION": {
+      "catch": 16,
+      "total": 30,
+      "catch_rate": 0.5333
+    },
+    "BASICITY_INCONSISTENCY": {
+      "catch": 22,
+      "total": 30,
+      "catch_rate": 0.7333
+    },
+    "VISCOSITY_SIGN_ERROR": {
+      "catch": 15,
+      "total": 30,
+      "catch_rate": 0.5
+    },
+    "THERMODYNAMIC_ERROR": {
+      "catch": 13,
+      "total": 30,
+      "catch_rate": 0.4333
+    },
+    "MASS_BALANCE_ERROR": {
+      "catch": 12,
+      "total": 30,
+      "catch_rate": 0.4
+    }
+  },
+  "catch_by_phrasing": {
+    "A": {
+      "catch": 28,
+      "total": 50,
+      "catch_rate": 0.56
+    },
+    "B": {
+      "catch": 28,
+      "total": 50,
+      "catch_rate": 0.56
+    },
+    "C": {
+      "catch": 22,
+      "total": 50,
+      "catch_rate": 0.44
+    }
+  },
+  "never_caught_pairs": [
+    "Q001",
+    "Q010",
+    "Q022",
+    "Q026",
+    "Q032",
+    "Q043",
+    "Q044",
+    "Q045",
+    "Q048"
+  ]
+}
