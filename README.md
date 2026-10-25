@@ -1,11 +1,28 @@
 ---
-title: "Slag Physical Plausibility Benchmark (SLPB-50)"
+title: Slag Physical Plausibility Benchmark (SLPB-50)
 emoji: 🔥
 colorFrom: orange
 colorTo: red
 sdk: static
 pinned: true
-license: mit
+annotations_creators:
+  - expert-generated
+language_creators:
+  - expert-generated
+language:
+  - en
+license:
+  - mit
+multilinguality:
+  - monolingual
+size_categories:
+  - n<1K
+source_datasets:
+  - original
+task_categories:
+  - text-classification
+task_ids:
+  - natural-language-inference
 tags:
   - evaluation
   - pyrometallurgy
@@ -14,6 +31,7 @@ tags:
   - blind-spots
   - frontier-models
   - materials-science
+pretty_name: Slag Physical Plausibility Benchmark (SLPB-50)
 ---
 
 # Slag Physical Plausibility Benchmark (SLPB-50)
