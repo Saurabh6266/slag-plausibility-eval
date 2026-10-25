@@ -18,10 +18,6 @@ tags:
 
 # Slag Physical Plausibility Benchmark (SLPB-50)
 
----
-
-## Overview
-
 This repository contains all artifacts for evaluating whether a small frontier language model
 can detect physically impossible claims in **pyrometallurgy and slag chemistry** —
 a domain where plausible-sounding but physically inconsistent outputs can have serious
@@ -35,14 +31,13 @@ real-world consequences in steel and metals production.
 | `results/` | Full model responses, verdicts, and summary statistics |
 
 **Model evaluated:** `google/gemma-3-4b-it`  
-**Model justification:** Gemma 3 4B is Google's strongest open-weight 4B instruct model,
-performs competitively on STEM reasoning benchmarks (MMLU, GPQA), fits within the 0.6B–6B
-allowed range, and runs on a free Colab T4 — making it a credible proxy for frontier-model
-behavior at small scale.
+**Model rationale:** Gemma 3 4B is Google's newest open-weight instruct architecture,
+performing competitively on STEM reasoning benchmarks (MMLU, GPQA) while operating in
+an accessible edge parameter regime (4B parameters) deployable on consumer and standard cloud GPUs (such as an NVIDIA T4).
 
 ---
 
-## Q1 — The Blind Spot: Physical Plausibility in Materials Reasoning
+## Research Motivation: Physical Plausibility in Materials Reasoning
 
 ### Where this comes from
 
@@ -265,7 +260,7 @@ These represent systemic "cognitive blind spots" where the model's statistical l
 
 ---
 
-## Q3 — Path Forward: Contrastive Fine-Tuning for Physical Plausibility
+## Path Forward: Contrastive Fine-Tuning & Neurosymbolic Gating
 
 ### The core problem
 
@@ -343,7 +338,7 @@ pure fine-tuning, and may be more robust to distribution shift across domains.
 
 ```
 /slag-plausibility-eval/
-├── README.md                            ← This file (Q1 + Q3 answers)
+├── README.md                            ← Benchmark overview, methodology, and empirical findings
 ├── dataset/
 │   ├── slag_plausibility_dataset.json  ← SLPB-50: 50 pairs × 3 phrasings
 │   └── dataset_card.md                 ← Dataset documentation
