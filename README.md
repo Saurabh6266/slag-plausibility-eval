@@ -247,15 +247,15 @@ When evaluating viscosity modifier effects, the model hallucinated inverted caus
 > - *"Higher SiO2 content decreases viscosity (more fluidity)."*  
 > - *"Higher CaO content increases viscosity (more rigidity)."*  
 >
-> **Ground Truth Physics:** Silica ($SiO_2$) is the archetypal **network former**; increasing silica polymerizes silicate tetrahedral chains, exponentially *increasing* viscosity. Calcium oxide ($CaO$) is a **network modifier** (basic oxide) that donates $O^{2-}$ ions to break silicate chains, drastically *lowering* viscosity. The model stated the exact reverse of the fundamental governing law of silicate melts.
+> **Ground Truth Physics:** Silica (SiO2) is the archetypal **network former**; increasing silica polymerizes silicate tetrahedral chains, exponentially *increasing* viscosity. Calcium oxide (CaO) is a **network modifier** (basic oxide) that donates O²⁻ ions to break silicate chains, drastically *lowering* viscosity. The model stated the exact reverse of the fundamental governing law of silicate melts.
 
 #### Failure Mode 3: Stoichiometric Blindness in Reaction Balances
-In `Q041` (unbalanced carbothermic reduction: $FeO + C \rightarrow Fe + CO_2$), the model declared:
+In `Q041` (unbalanced carbothermic reduction: FeO + C → Fe + CO2), the model declared:
 > **Gemma 3 4B:** *"This statement describes a single chemical reaction... Step 1 & 2 not applicable... VERDICT: VALID"*  
 > It completely missed that the equation has 1 oxygen atom on the reactant side and 2 oxygen atoms on the product side, in direct violation of the law of conservation of mass.
 
 #### Failure Mode 4: Hyper-Skepticism on Partial Context (Spurious Rejections)
-In `Q011` (asking whether $40\%\ CaO$ and $35\%\ SiO_2$ yields basicity $B = 40/35 = 1.14$), the prompt asked solely about arithmetic consistency. The model rejected the valid statement:
+In `Q011` (asking whether 40% CaO and 35% SiO2 yields basicity B = 40/35 = 1.14), the prompt asked solely about arithmetic consistency. The model rejected the valid statement:
 > **Gemma 3 4B:** *"40% CaO + 35% SiO2 = 75%. The oxide percentages sum to 75%, not 100%. This is a significant issue... VERDICT: INVALID"*  
 > The model over-indexed on the sum-to-100 constraint even when evaluating an isolated ratio problem, explaining the 80% false-alarm rate in the basicity category.
 
